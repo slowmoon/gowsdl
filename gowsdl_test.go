@@ -6,8 +6,10 @@ package gowsdl
 
 import (
 	"bytes"
+	"encoding/xml"
 	"errors"
 	"fmt"
+	"github.com/hooklift/gowsdl/soap"
 	"go/format"
 	"go/parser"
 	"go/printer"
@@ -170,4 +172,23 @@ func getTypeDeclaration(resp map[string][]byte, name string) (string, error) {
 		return "", err
 	}
 	return buf.String(), nil
+}
+
+type Person struct {
+   XMLName     xml.Name  `xml:"person"`
+   Name        string    `xml:"name"`
+   Age         int        `xml:"age"`
+}
+
+func Test_CreateSoapAction(t *testing.T) {
+	var  p Person
+	p.Name = "rose"
+	p.Age =12
+	var envelop soap.SOAPEnvelope
+	envelop.Body.Content = &p
+	if result, err := xml.Marshal(&envelop);err != nil {
+		t.Error(err)
+	} else {
+		t.Logf("%s", result)
+	}
 }

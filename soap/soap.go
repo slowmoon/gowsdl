@@ -21,14 +21,14 @@ type SOAPDecoder interface {
 }
 
 type SOAPEnvelope struct {
-	XMLName xml.Name      `xml:"http://schemas.xmlsoap.org/soap/envelope/ Envelope"`
+	XMLName  xml.Name    `xml:"soapenv:Envelope"`
+    Xmlns    string      `xml:"xmlns:soapenv,attr"`
 	Headers []interface{} `xml:"http://schemas.xmlsoap.org/soap/envelope/ Header"`
 	Body    SOAPBody
 }
 
 type SOAPBody struct {
-	XMLName xml.Name `xml:"http://schemas.xmlsoap.org/soap/envelope/ Body"`
-
+	XMLName xml.Name `xml:"soapenv:Body"`
 	Fault   *SOAPFault  `xml:",omitempty"`
 	Content interface{} `xml:",omitempty"`
 }
@@ -278,7 +278,7 @@ func (s *Client) Call(soapAction string, request, response interface{}) error {
 
 func (s *Client) call(ctx context.Context, soapAction string, request, response interface{}) error {
 	envelope := SOAPEnvelope{}
-
+	envelope.Xmlns = "http://schemas.xmlsoap.org/soap/envelope/"
 	if s.headers != nil && len(s.headers) > 0 {
 		envelope.Headers = s.headers
 	}
