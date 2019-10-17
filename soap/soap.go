@@ -21,14 +21,29 @@ type SOAPDecoder interface {
 }
 
 type SOAPEnvelope struct {
-	XMLName  xml.Name    `xml:"soapenv:Envelope"`
-    Xmlns    string      `xml:"xmlns:soapenv,attr"`
+	XMLName  xml.Name    `xml:"soap:Envelope"`
+    Xmlns    string      `xml:"xmlns:soap,attr"`
 	Headers []interface{} `xml:"http://schemas.xmlsoap.org/soap/envelope/ Header"`
 	Body    SOAPBody
 }
 
 type SOAPBody struct {
-	XMLName xml.Name `xml:"soapenv:Body"`
+	XMLName xml.Name `xml:"soap:Body"`
+	Fault   *SOAPFault  `xml:",omitempty"`
+	Content interface{} `xml:",omitempty"`
+}
+
+
+
+type SOAPEnvelopeResp struct {
+	XMLName  xml.Name    `xml:"Envelope"`
+	Xmlns    string      `xml:"xmlns:soap,attr"`
+	Headers []interface{} `xml:"http://schemas.xmlsoap.org/soap/envelope/ Header"`
+	Body    SOAPBodyResp
+}
+
+type SOAPBodyResp struct {
+	XMLName xml.Name `xml:"Body"`
 	Fault   *SOAPFault  `xml:",omitempty"`
 	Content interface{} `xml:",omitempty"`
 }
@@ -343,8 +358,8 @@ func (s *Client) call(ctx context.Context, soapAction string, request, response 
 	}
 	defer res.Body.Close()
 
-	respEnvelope := new(SOAPEnvelope)
-	respEnvelope.Body = SOAPBody{Content: response}
+	respEnvelope := new(SOAPEnvelopeResp)
+	respEnvelope.Body = SOAPBodyResp{Content: response}
 
 	mtomBoundary, err := getMtomHeader(res.Header.Get("Content-Type"))
 	if err != nil {

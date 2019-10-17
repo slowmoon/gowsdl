@@ -9,7 +9,7 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
-	"github.com/hooklift/gowsdl/soap"
+	"github.com/slowmoon/gowsdl/soap"
 	"go/format"
 	"go/parser"
 	"go/printer"
